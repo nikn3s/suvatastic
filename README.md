@@ -3,7 +3,11 @@
 To run this project, follow these steps:
 > Clone this github repository
 ```
-git clone github.com/nikn3s/suvatastic
+git clone github.com/nikn3s/suvatastic](https://github.com/nikn3s/suvatastic.git
+```
+or using github CLI
+```
+gh repo clone nikn3s/suvatastic
 ```
 > In the folder where you downloaded it to, create a python virtual environment and activate it
 Windows
