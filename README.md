@@ -1,6 +1,6 @@
 # Suvatastic! 
 
-Documentation is available [here](niko.super.site)
+Documentation is available [here](https://niko.super.site/suvatastic)
 
 To run this project, follow these steps:
 > Clone this github repository using git:
