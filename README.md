@@ -1,11 +1,11 @@
 # Suvatastic! 
 
 To run this project, follow these steps:
-> Clone this github repository
+> Clone this github repository using git:
 ```
-git clone github.com/nikn3s/suvatastic](https://github.com/nikn3s/suvatastic.git
+git clone https://github.com/nikn3s/suvatastic.git
 ```
-or using github CLI
+or using github CLI:
 ```
 gh repo clone nikn3s/suvatastic
 ```
