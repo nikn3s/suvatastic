@@ -1,6 +1,17 @@
 import flet as ft
 from utils import calculateSUVAT
+from math import trunc
 
+def writeLogs(data:str)->None:
+    with open("logs.bin", mode="ab") as f:
+        f.write(data)
+
+def readLogs()->list:
+    data = []
+    with open("logs.bin", mode="ab") as f:
+        for line in f.readlines:
+            data.append(line)   
+    return data
 
 def mainApp(page: ft.Page):
     page.title = "Suvatastic"
@@ -17,8 +28,14 @@ def mainApp(page: ft.Page):
     )
     page.update()
 
+    def openSnackbar(msg):
+        page.snack_bar = ft.SnackBar(
+            ft.Text(f"{msg}"),
+            duration=3500)
+        page.snack_bar.open = True
+        page.update()
 
-    page.drawer = ft.NavigationDrawer(\
+    page.drawer = ft.NavigationDrawer(
         controls=[
             # TODO
             ft.Container(height=30),
@@ -29,10 +46,12 @@ def mainApp(page: ft.Page):
             ft.Container(height=20),
             ft.Divider(thickness=2),
             ft.Container(height=20),
+
+            ft.Container(height=20),
             ft.Text(
                 spans=[
                     ft.TextSpan(
-                        text="Source Code", url="https://niko.super.site/suvatastic"
+                        text="Docs", url="https://niko.super.site/suvatastic"
                     ),
                     ft.TextSpan(" (click)"),
                 ],
@@ -40,32 +59,40 @@ def mainApp(page: ft.Page):
                 size=16,
                 color=ft.colors.LIGHT_BLUE_100,
             ),
-            ft.Container(height=20),
+            ft.Container(height=200),
+            ft.Text("Developed by Nik",text_align=ft.TextAlign.CENTER,)
         ],
     )
 
     s = ft.TextField(
-        label="Displacement (m)", width=180, keyboard_type=ft.KeyboardType.NUMBER
+        label="Displacement (m)", 
+        width=180, 
+        keyboard_type=ft.KeyboardType.NUMBER,
+        disabled=True
     )
     u = ft.TextField(
         label="Initial Velocity (ms-1)",
         width=180,
         keyboard_type=ft.KeyboardType.NUMBER,
+        disabled=True
     )
     v = ft.TextField(
         label="Final Velocity (ms-1)",
         width=180,
         keyboard_type=ft.KeyboardType.NUMBER,
+        disabled=True
     )
     a = ft.TextField(
         label="Acceleration (ms-2)",
         width=180,
         keyboard_type=ft.KeyboardType.NUMBER,
+        disabled=True
     )
     t = ft.TextField(
         label="Time taken (s)",
         width=300,
         keyboard_type=ft.KeyboardType.NUMBER,
+        disabled=True
     )
 
     BTNcalculate = ft.FilledButton(
@@ -81,55 +108,105 @@ def mainApp(page: ft.Page):
         disabled=False,
         adaptive=True,
     )
+    rounding = 2
+    TFrounding = ft.TextField(value=rounding, 
+                              label="Round (d.p.)", 
+                              width=100, 
+                              text_align=ft.TextAlign.CENTER,
+                              max_length=2,
+                              keyboard_type=ft.KeyboardType.NUMBER,
+                              enable_suggestions=False,
+                              border=ft.InputBorder.UNDERLINE,                       
+                              )
 
     def clearFields(e):
+        s.disabled = False
+        u.disabled = False
+        v.disabled = False
+        a.disabled = False
+        t.disabled = False
+
+        
         s.value = ""
         u.value = ""
         v.value = ""
         a.value = ""
         t.value = ""
+
+        s.disabled = True
+        u.disabled = True
+        v.disabled = True
+        a.disabled = True
+        t.disabled = True
+        BTNcalculate.disabled = True
+
         page.update()
 
     BTNclear.on_click = clearFields
 
     def displayResults(e) -> None:
+
+        try:
+
+            rounding = trunc(float(TFrounding.value))
+
+            if rounding < 1:
+                rounding = 2
+                TFrounding.value = '2'
+            else: 
+                TFrounding.value = rounding
+
+        except Exception:
+            rounding = 2
+            TFrounding.value = '2'
+
+        # Predefined snack_bar messages
+        msg_four_values = "Only three fields should be filled"
+        msg_impos_result = "Make sure you inputted the correct values. \tUnexpected value were returned."
+        
         s_value = str(s.value).strip()
         u_value = str(u.value).strip()
         v_value = str(v.value).strip()
         a_value = str(a.value).strip()
         t_value = str(t.value).strip()
-        # print(s_value, u_value, v_value, a_value, t_value)
-
-        rounding = 3
         try:
+            # Checks if Displacement field is disabled (s)
             if s.disabled:
-                if v_value != "" and a_value != "" and t_value != "":
+                
+                if u_value != '' and v_value != '' and a_value != '' and t_value != '':
+                    openSnackbar(msg=msg_four_values)
+
+                elif v_value != "" and a_value != "" and t_value != "":
                     s.disabled = False
                     s.value = str(
                         round(
                             calculateSUVAT("n", "n", v_value, a_value, t_value, "s"),
-                            rounding,
-                        )
+                            ndigits=rounding
+                              )
                     )
                     s.disabled = True
+
                 elif u_value != "" and a_value != "" and t_value != "":
                     s.disabled = False
                     s.value = str(
                         round(
                             calculateSUVAT("n", u_value, "n", a_value, t_value, "s"),
-                            rounding,
+                            ndigits=rounding,
                         )
                     )
                     s.disabled = True
+
                 elif u_value != "" and v_value != "" and t_value != "":
                     s.disabled = False
-                    s.value = str(
+                    result = str(
                         round(
                             calculateSUVAT("n", u_value, v_value, "n", t_value, "s"),
-                            rounding,
+                            ndigits=rounding,
                         )
                     )
+                    s.value = result
                     s.disabled = True
+
                 elif v_value != "" and u_value != "" and a_value != "":
                     s.disabled = False
                     s.value = str(
@@ -141,9 +218,13 @@ def mainApp(page: ft.Page):
                     s.disabled = True
                 else:
                     pass
-
+            # Checks if FINAL field is  disabled
             elif u.disabled:
-                if v_value != "" and a_value != "" and t_value != "":
+
+                if s_value != '' and v_value != '' and a_value != '' and t_value != '':
+                    openSnackbar(msg=msg_four_values)
+
+                elif v_value != "" and a_value != "" and t_value != "":
                     u.disabled = False
                     u.value = str(
                         round(
@@ -152,24 +233,28 @@ def mainApp(page: ft.Page):
                         )
                     )
                     u.disabled = True
+
                 elif v_value != "" and a_value != "" and s_value != "":
                     u.disabled = False
-                    u.value = str(
+                    result = str(
                         round(
                             calculateSUVAT(s_value, "n", v_value, a_value, "n", "u"),
                             rounding,
                         )
                     )
+                    u.value = f'±{result}'
                     u.disabled = True
+
                 elif s_value != "" and v_value != "" and t_value != "":
                     u.disabled = False
                     u.value = str(
                         round(
-                            calculateSUVAT(s_value, "n", "n", a_value, t_value, "u"),
+                            calculateSUVAT(s_value, "n", v_value,'n', t_value, "u"),
                             rounding,
                         )
                     )
                     u.disabled = True
+
                 elif s_value != "" and a_value != "" and t_value != "":
                     u.disabled = False
                     u.value = str(
@@ -181,9 +266,13 @@ def mainApp(page: ft.Page):
                     u.disabled = True
                 else:
                     pass
-
+            # Checks if final velocity field is disabled (v)
             elif v.disabled:
-                if u_value != "" and a_value != "" and t_value != "":
+
+                if s_value != '' and u_value != '' and a_value != '' and t_value != '':
+                    openSnackbar(msg=msg_four_values)
+
+                elif u_value != "" and a_value != "" and t_value != "":
                     v.disabled = False
                     v.value = str(
                         round(
@@ -201,6 +290,7 @@ def mainApp(page: ft.Page):
                         )
                     )
                     v.disabled = True
+
                 elif s_value != "" and u_value != "" and t_value != "":
                     v.disabled = False
                     v.value = str(
@@ -210,6 +300,7 @@ def mainApp(page: ft.Page):
                         )
                     )
                     v.disabled = True
+
                 elif s_value != "" and a_value != "" and t_value != "":
                     v.disabled = False
                     v.value = str(
@@ -219,9 +310,54 @@ def mainApp(page: ft.Page):
                         )
                     )
                     v.disabled = True
+            # Checks if acceleration field is disabled (a)
+            elif a.disabled:
+
+                if s_value != '' and u_value != '' and v_value != '' and t_value != '':
+                    openSnackbar(msg=msg_four_values)
+
+                elif s_value != "" and u_value != "" and v_value != "":
+                    a.disabled = False
+                    result = str(
+                        round(
+                            calculateSUVAT(s_value, u_value, v_value, "n", "n", toFind="a"),
+                            rounding
+                            )
+                    )
+                    a.value = result
+                    a.disabled = True
+
+                elif s_value != '' and u_value != '' and t != '':
+                    a.disabled = False
+                    result = round(
+                        calculateSUVAT(s_value, u_value, 'n', 'n', t_value, toFind='a'),
+                        rounding
+                        )
+                    a.value = str(result)
+                    a.disabled = True
+
+                elif s_value != '' and v_value != '' and t_value != '':
+                    result = round(
+                        calculateSUVAT(s_value, 'n', v_value, 'n', t_value, toFind='a'),
+                        rounding
+                        )
+                    a.value = str(result)
+                    a.disabled = True
+
+                elif u_value != '' and v_value != '' and t_value != '':
+                    result = round(
+                        calculateSUVAT('n', u_value, v_value, 'n', t_value, toFind='a'),
+                        rounding
+                        )
+                    a.value = str(result)
+                    a.disabled = True
 
             elif t.disabled:
-                if s_value != "" and u_value != "" and v_value != "":
+
+                if s_value != '' and u_value != '' and v_value != '' and a_value != '':
+                    openSnackbar(msg=msg_four_values)
+
+                elif s_value != "" and u_value != "" and v_value != "":
                     t.disabled = False
                     t.value = str(
                         round(
@@ -230,6 +366,7 @@ def mainApp(page: ft.Page):
                         )
                     )
                     t.disabled = True
+
                 elif a_value != "" and u_value != "" and v_value != "":
                     t.disabled = False
                     t.value = str(
@@ -239,23 +376,23 @@ def mainApp(page: ft.Page):
                         )
                     )
                     t.disabled = True
+
                 elif a_value != "" and s_value != "" and v_value != "":
 
                     result = calculateSUVAT(s_value, "n", v_value, a_value, "n", "t")
-                    if result[0] >= result[1]:
+                    if result[0] > 0 or result[1] > 0:
                         t.disabled = False
-                        t.value = str(round(result[0], rounding))
+                        text_res = str(round(result[0], rounding))
+                        text_res2 = str(round(result[1], rounding))
+                        if result[1] <= 0:
+                            t.value = text_res
+                        elif result[0] <= 0:
+                            t.value = text_res2
+                        else:
+                            t.value = text_res + ' or ' + text_res2
                         t.disabled = True
                     else:
-                        page.snack_bar = ft.SnackBar(
-                            content=ft.Text(
-                                "Time turned out to be negative. Impossible!"
-                            ),
-                            action="Dismiss",
-                        )
-                        page.snack_bar.open
-                        page.update()
-                    print(result)
+                        openSnackbar(msg="Results are negative. Impossible!")
 
                 elif s_value != "" and a_value != "" and u_value != "":
                     result = calculateSUVAT(s_value, u_value, "n", a_value, "n", "t")
@@ -265,32 +402,22 @@ def mainApp(page: ft.Page):
                         t.disabled = True
 
                     else:
-                        page.snack_bar = ft.SnackBar(
-                            content=ft.Text(
-                                "Please check again the values"
-                            )
-                        )
-                        page.snack_bar.open
+                        openSnackbar(msg="Time turned out to be negative. Impossible!")
                         page.update()
-                    print(result)
+
                     t.disabled = True
-                else:
-                    print(1)
+
+
             page.update()
 
         except Exception as e:
             if e == ValueError or str(e) == "math domain error":
-                page.snack_bar = ft.SnackBar(
-                    content=ft.Text("Enter valid numbers"),
-                    duration=2500,
-                    action="Dismiss",
-                )
-                page.snack_bar.open = True
-                clearFields()
+                clearFields(e)
+                openSnackbar(msg=msg_impos_result)
                 page.update()
 
             else:
-                print(f"{e}\nSomething went wrong")
+                openSnackbar(msg='Input must be a decimal value')
 
     def onSelection(e):
 
@@ -383,10 +510,11 @@ def mainApp(page: ft.Page):
                 run_spacing=10,
                 wrap=True,
                 alignment=ft.MainAxisAlignment.CENTER,
+                
             ),
         )
     )
-    page.add(BTNcalculate, BTNclear)
+    page.add(TFrounding, BTNcalculate, BTNclear)
     page.update()
 
 
