@@ -2,7 +2,7 @@
 
 Documentation is available [here](https://niko.super.site/suvatastic)
 
-[Download Link](https://www.dropbox.com/scl/fi/1uspj6n3k4ns0tj70n09p/app-release.apk?rlkey=yl8ofz11e42soejztk5cvl5pz&dl=0)
+[Download Link](https://www.dropbox.com/scl/fo/7y925fs0d6ksbqroyobxx/AOeCkOXfYl8Qws580i6OzgU?rlkey=e2403g7luriw0hf05ohewecys&dl=0)
 
 To run this project, follow these steps:
 > Clone this github repository using git:
