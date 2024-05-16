@@ -5,7 +5,6 @@ def solve(a, b, c):
         exit()
     disc = b**2 - 4 * a * c
     if disc <= 0:
-        print("Cant be >=0")
         return "Not real"
     else:
         x1 = (-b + sqrt(disc)) / (2 * a)
@@ -42,7 +41,7 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       v = float(v)
       u = float(u)
       a = float(a)
-      s = (v**2 - u**2) / 2 * a
+      s = (v**2 - u**2) / (2 * a)
       return s
     else:
       return 0
@@ -59,19 +58,19 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       v = float(v)
       a = float(a)
       s = float(s)
-      u = v - sqrt(v**2 - 2 * a * s)
+      u =  sqrt((v)**2 -(2 * a * s))
       return u
     elif s != 'n' and v != 'n' and t != 'n':
       s = float(s)
       v = float(v)
       t = float(t)
-      u = (s - 0.5 * v * t) / t
+      u = ((2*s)/t)-(v)
       return u
     elif s != 'n' and a != 'n' and t != 'n':
       s = float(s)
       a = float(a)
       t = float(t)
-      u = (s - 0.5 * a * t**2) / t
+      u = (s/t) - ((a/2)*(t**2))/t
       return t
   # Final velocity
   elif toFind == 'v':
@@ -91,13 +90,15 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       s = float(s)
       a = float(a)
       t = float(t)
-      v = s + 0.5 * a * t**2
+      virst = s/t
+      vsec = (((a/2)*(t**2))/t)
+      v = virst + vsec
       return v
     elif s != 'n' and t != 'n' and u != 'n':
       s = float(s)
       t = float(t)
       u = float(u)
-      v = 2 * s / 2 * t - u
+      v = (2 * s) / 2 * t - u
       return v
 
   elif toFind == 'a':
@@ -112,19 +113,19 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       v = float(v)
       u = float(u)
       s = float(s)
-      a = (v**2 - u**2) / 2 * s
+      a = (v**2 - u**2) / (2 * s)
       return a
     elif u != 'n' and t != 'n' and s != 'n':
       u = float(u)
       t = float(t)
       s = float(s)
-      a = 2 * s / t**2 - 2 * u / t
+      a = (s-(u*t)) / t**2
       return a
     elif v != 'n' and t != 'n' and s != 'n':
       v = float(v)
       t = float(t)
       s = float(s)
-      a = 2 * s / t**2 - 2 * v / t
+      a = (2*(v*t) - (2*s)) / t**2
       return a
 
   elif toFind == 't':
@@ -142,14 +143,14 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       t = (2 * s) / (u + v)
       return t
     elif s != 'n' and u != 'n' and a != 'n':
-      s = -(float(s))
+      s = float(s)
       u = float(u)
       a = float(a)
-      t = solve(0.5 * a, u, s)
+      t = solve(a/2, u, -s)
       return t
     elif s != 'n' and v != 'n' and a != 'n':
-      s = -(float(s))
+      s = float(s)
       v = float(v)
       a = float(a)
-      t = solve(0.5 * a, v, s)
+      t = solve(a/2, -v, s)
       return t
