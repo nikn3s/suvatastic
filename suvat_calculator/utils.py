@@ -23,19 +23,19 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       u = float(u)
       v = float(v)
       t = float(t)
-      s = 0.5 * (v + u) * t
+      s = ((v + u) / 2) * (t)
       return s
     elif v != "n" and a != "n" and t != "n":
       v = float(v)
       a = float(a)
       t = float(t)
-      s = v * t - 0.5 * a * t**2
+      s = (v * t ) - ( (a / 2) * (t**2 ))
       return s
     elif u != "n" and a != "n" and t != "n":
       u = float(u)
       a = float(a)
       t = float(t)
-      s = u * t + 0.5 * a * t**2
+      s = (u * t) + ((a / 2) * (t**2))
       return s
     elif v != 'n' and u != 'n' and a != 'n':
       v = float(v)
@@ -52,13 +52,14 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       v = float(v)
       a = float(a)
       t = float(t)
-      u = v - a * t
+      u = (v) - (a * t)
       return u
     elif v != 'n' and a != 'n' and s != 'n':
       v = float(v)
       a = float(a)
       s = float(s)
-      u =  sqrt((v)**2 -(2 * a * s))
+      res = sqrt((v**2) - (2 * a * s))
+      u = res
       return u
     elif s != 'n' and v != 'n' and t != 'n':
       s = float(s)
@@ -70,7 +71,7 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       s = float(s)
       a = float(a)
       t = float(t)
-      u = (s/t) - ((a/2)*(t**2))/t
+      u = (s-(a / 2) * (t**2)) / (t)
       return t
   # Final velocity
   elif toFind == 'v':
@@ -78,13 +79,14 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       u = float(u)
       a = float(a)
       t = float(t)
-      v = u + a * t
+      v = u + (a * t)
       return v
     elif u != 'n' and a != 'n' and s != 'n':
       u = float(u)
       a = float(a)
       s = float(s)
-      v = sqrt(u**2 + 2 * a * s)
+      res = sqrt((u**2) + (2*(a*s)))
+      v = res
       return v
     elif s != 'n' and a != 'n' and t != 'n':
       s = float(s)
@@ -98,7 +100,7 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       s = float(s)
       t = float(t)
       u = float(u)
-      v = (2 * s) / 2 * t - u
+      v = ((2*s) / t) - (u)
       return v
 
   elif toFind == 'a':
@@ -119,13 +121,13 @@ def calculateSUVAT(s, u, v, a, t, toFind):
       u = float(u)
       t = float(t)
       s = float(s)
-      a = (s-(u*t)) / t**2
+      a = ((2*s) - (2*(u*t))) / (t**2)
       return a
     elif v != 'n' and t != 'n' and s != 'n':
       v = float(v)
       t = float(t)
       s = float(s)
-      a = (2*(v*t) - (2*s)) / t**2
+      a = ((2*(v*t)) - (2*s)) / (t**2)
       return a
 
   elif toFind == 't':
