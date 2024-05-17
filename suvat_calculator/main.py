@@ -2,17 +2,6 @@ import flet as ft
 from utils import calculateSUVAT
 from math import trunc
 
-def writeLogs(data:str)->None:
-    with open("logs.bin", mode="ab") as f:
-        f.write(data)
-
-def readLogs()->list:
-    data = []
-    with open("logs.bin", mode="ab") as f:
-        for line in f.readlines:
-            data.append(line)   
-    return data
-
 def mainApp(page: ft.Page):
     page.title = "Suvatastic"
     page.fonts = {"Outfit": "/assets/fonts/Outfit-Regular.ttf"}
